@@ -21,5 +21,8 @@
       "App\\": "src/App"
     }
   },
+  "scripts": {
+    "post-create-project-cmd": "App\\AppConfig::run"
+  },
   "minimum-stability": "stable"
 }

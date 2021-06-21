@@ -30,6 +30,8 @@ class MainApp
      */
     public function __construct()
     {
+        session_start();
+
         try {
             /** BOOTSTRAP STARTS */
             // parse .env file and store them them in $_ENV
@@ -56,7 +58,7 @@ class MainApp
 
                 header(header: 'HTTP/1.1 301 Moved Permanently');
                 header(header: 'Location: ' . $currentUrl);
-                
+
                 exit;
             }
             /** BOOTSTRAP ENDS */

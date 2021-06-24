@@ -13,8 +13,10 @@
   ],
   "require": {
     "php": ">=8.0.0",
+    "fluence-prototype/bean": "^1.0",
     "fluence-prototype/collections": "^1.0",
-    "fluence-prototype/dispatcher": "^1.0"
+    "fluence-prototype/dispatcher": "^1.0",
+    "fluence-prototype/security": "^1.0"
   },
   "autoload": {
     "psr-4": {

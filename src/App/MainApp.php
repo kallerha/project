@@ -17,6 +17,7 @@ use FluencePrototype\Http\Messages\NotFoundException;
 use FluencePrototype\Http\Messages\Request;
 use FluencePrototype\Router\RouteInformation;
 use FluencePrototype\Router\RouteMatcher;
+use RedBeanPHP\R;
 
 /**
  * Class MainApp
@@ -30,6 +31,8 @@ class MainApp
      */
     public function __construct()
     {
+        setlocale(LC_ALL, 'da', 'da_DK', 'da-DK');
+        date_default_timezone_set('Europe/Berlin');
         session_start();
 
         try {
@@ -48,6 +51,13 @@ class MainApp
 
                 $_ENV[trim($key)] = trim($value);
             }
+
+            // establish db connection
+            $dsn = 'mysql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['DATABASE_NAME'];
+
+            R::setup(dsn: $dsn, username: $_ENV['DATABASE_USERNAME'], password: $_ENV['DATABASE_PASSWORD']);
+            R::freeze(tf: false);
+            R::usePartialBeans(yesNoBeans: true);
 
             // evaluate url and eventually reinforce subdomain on 301 redirect
             $currentUrl = HttpUrl::createFromCurrentUrl();

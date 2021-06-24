@@ -66,6 +66,10 @@ class AppConfig
         (new Filesystem($vendorDir . '/..'))->touchFile('', 'env')
             ->writeLine("SCHEME={$scheme}")
             ->writeLine("HOST={$host}")
+            ->writeLine("DATABASE_HOST=127.0.0.1")
+            ->writeLine("DATABASE_NAME=dev")
+            ->writeLine("DATABASE_USERNAME=root")
+            ->writeLine("DATABASE_PASSWORD=")
             ->writeLine("MEMCACHED_HOST={$memcachedHost}")
             ->writeLine("MEMCACHED_PORT={$memcachedPort}");
 

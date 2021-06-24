@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers\www;
 
 use FluencePrototype\Http\Messages\iResponse;
-use FluencePrototype\Http\Messages\View;
+use FluencePrototype\Http\Messages\Response\View;
 use FluencePrototype\Http\Methods\iGet;
 use FluencePrototype\Router\Route;
 

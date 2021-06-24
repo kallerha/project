@@ -53,7 +53,7 @@ class MainApp
             }
 
             // establish db connection
-            $dsn = 'mysql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['DATABASE_NAME'];
+            $dsn = 'mysql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['DATABASE_NAME'] . ';charset=utf8';
 
             R::setup(dsn: $dsn, username: $_ENV['DATABASE_USERNAME'], password: $_ENV['DATABASE_PASSWORD']);
             R::freeze(tf: false);

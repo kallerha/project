@@ -7,6 +7,7 @@ namespace App;
 use FluencePrototype\Cache\Cache;
 use FluencePrototype\Console\Commands;
 use FluencePrototype\Dispatcher\Dispatcher;
+use FluencePrototype\Dispatcher\InvalidDependencyException;
 use FluencePrototype\Filesystem\DirectoryNotFoundException;
 use FluencePrototype\Filesystem\Filesystem;
 use FluencePrototype\Filesystem\InvalidDirectoryPathException;
@@ -84,7 +85,39 @@ class MainApp
             $routeInformation = RouteInformation::createFromArray(routeInformationArray: $routeInformationArray);
             $dispatcher = new Dispatcher(request: $request, routeInformation: $routeInformation);
             $dispatcher->dispatch()->render();
-        } catch (DirectoryNotFoundException | InvalidDirectoryPathException | InvalidFilePathException | NotFoundException | MethodNotAllowedException $exception) {
+        } catch (DirectoryNotFoundException | InvalidDirectoryPathException | InvalidDependencyException | InvalidFilePathException | NotFoundException | MethodNotAllowedException | ReflectionException $exception) {
+            if ($exception instanceof NotFoundException and class_exists('App\\Controllers\\' . $request->getSubdomain() . '\\NotFoundController')) {
+                $request = new Request();
+
+                $routeInformationArray = [
+                    'isFile' => false,
+                    'name' => '404',
+                    'parametersLength' => 0,
+                    'path' => '',
+                    'resource' => 'App\\Controllers\\' . $request->getSubdomain() . '\\NotFoundController'
+                ];
+
+                $routeInformation = RouteInformation::createFromArray(routeInformationArray: $routeInformationArray);
+                $dispatcher = new Dispatcher(request: $request, routeInformation: $routeInformation);
+                $dispatcher->dispatch()->render();
+            }
+
+            if ($exception instanceof MethodNotAllowedException and class_exists('App\\Controllers\\' . $request->getSubdomain() . '\\MethodNotAllowedController')) {
+                $request = new Request();
+
+                $routeInformationArray = [
+                    'isFile' => false,
+                    'name' => '405',
+                    'parametersLength' => 0,
+                    'path' => '',
+                    'resource' => 'App\\Controllers\\' . $request->getSubdomain() . '\\MethodNotAllowedController'
+                ];
+
+                $routeInformation = RouteInformation::createFromArray(routeInformationArray: $routeInformationArray);
+                $dispatcher = new Dispatcher(request: $request, routeInformation: $routeInformation);
+                $dispatcher->dispatch()->render();
+            }
+
             die($exception->getCode());
         }
     }

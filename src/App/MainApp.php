@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use FluencePrototype\Auth\ForbiddenException;
 use FluencePrototype\Cache\Cache;
 use FluencePrototype\Console\Commands;
 use FluencePrototype\Dispatcher\Dispatcher;
@@ -85,7 +86,23 @@ class MainApp
             $routeInformation = RouteInformation::createFromArray(routeInformationArray: $routeInformationArray);
             $dispatcher = new Dispatcher(request: $request, routeInformation: $routeInformation);
             $dispatcher->dispatch()->render();
-        } catch (DirectoryNotFoundException | InvalidDirectoryPathException | InvalidDependencyException | InvalidFilePathException | NotFoundException | MethodNotAllowedException | ReflectionException $exception) {
+        } catch (ForbiddenException | DirectoryNotFoundException | InvalidDirectoryPathException | InvalidDependencyException | InvalidFilePathException | NotFoundException | MethodNotAllowedException | ReflectionException $exception) {
+            if ($exception instanceof ForbiddenException and class_exists('App\\Controllers\\' . $request->getSubdomain() . '\\ForbiddenController')) {
+                $request = new Request();
+
+                $routeInformationArray = [
+                    'isFile' => false,
+                    'name' => '404',
+                    'parametersLength' => 0,
+                    'path' => '',
+                    'resource' => 'App\\Controllers\\' . $request->getSubdomain() . '\\ForbiddenController'
+                ];
+
+                $routeInformation = RouteInformation::createFromArray(routeInformationArray: $routeInformationArray);
+                $dispatcher = new Dispatcher(request: $request, routeInformation: $routeInformation);
+                $dispatcher->dispatch()->render();
+            }
+
             if ($exception instanceof NotFoundException and class_exists('App\\Controllers\\' . $request->getSubdomain() . '\\NotFoundController')) {
                 $request = new Request();
 

@@ -58,6 +58,7 @@ class MainApp
             $dsn = 'mysql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['DATABASE_NAME'] . ';charset=utf8';
 
             R::setup(dsn: $dsn, username: $_ENV['DATABASE_USERNAME'], password: $_ENV['DATABASE_PASSWORD']);
+            R::useFeatureSet('novice/latest');
             R::freeze(tf: false);
             R::usePartialBeans(yesNoBeans: true);
 

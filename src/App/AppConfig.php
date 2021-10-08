@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App;
 
 use Composer\Script\Event;
+use FluencePrototype\Filesystem\DirectoryNotFoundException;
 use FluencePrototype\Filesystem\Filesystem;
+use FluencePrototype\Filesystem\InvalidDirectoryPathException;
+use FluencePrototype\Filesystem\InvalidFilepathException;
 
 class AppConfig
 {
@@ -26,7 +29,7 @@ class AppConfig
 
             sleep(1);
 
-            self::scheme();
+            AppConfig::scheme();
         }
 
         return $input;
@@ -58,20 +61,23 @@ class AppConfig
 
         sleep(3);
 
-        $scheme = self::scheme();
-        $host = self::host();
+        $scheme = AppConfig::scheme();
+        $host = AppConfig::host();
         $memcachedHost = '127.0.0.1';
         $memcachedPort = '11211';
 
-        (new Filesystem($vendorDir . '/..'))->touchFile('', 'env')
-            ->writeLine("SCHEME={$scheme}")
-            ->writeLine("HOST={$host}")
-            ->writeLine("DATABASE_HOST=127.0.0.1")
-            ->writeLine("DATABASE_NAME=dev")
-            ->writeLine("DATABASE_USERNAME=root")
-            ->writeLine("DATABASE_PASSWORD=")
-            ->writeLine("MEMCACHED_HOST={$memcachedHost}")
-            ->writeLine("MEMCACHED_PORT={$memcachedPort}");
+        try {
+            (new Filesystem($vendorDir . '/..'))->touchFile('', 'env')
+                ->writeLine("SCHEME=$scheme")
+                ->writeLine("HOST=$host")
+                ->writeLine("DATABASE_HOST=127.0.0.1")
+                ->writeLine("DATABASE_NAME=dev")
+                ->writeLine("DATABASE_USERNAME=root")
+                ->writeLine("DATABASE_PASSWORD=")
+                ->writeLine("MEMCACHED_HOST=$memcachedHost")
+                ->writeLine("MEMCACHED_PORT=$memcachedPort");
+        } catch (DirectoryNotFoundException | InvalidFilepathException | InvalidDirectoryPathException) {
+        }
 
         echo 'OK! The input has been saved to a .env file in your project folder! Have a great day :-)';
     }

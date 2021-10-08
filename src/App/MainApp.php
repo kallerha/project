@@ -98,7 +98,7 @@ class MainApp
             ob_flush();
         } catch (ForbiddenException | InvalidDependencyException | InvalidFilePathException | NotFoundException | MethodNotAllowedException | ReflectionException | DirectoryNotFoundException | InvalidDirectoryPathException  $exception) {
             $request = new Request();
-            
+
             if ($exception instanceof ForbiddenException and class_exists('App\\Controllers\\' . $request->getSubdomain() . '\\ForbiddenController')) {
 
                 $routeInformationArray = [

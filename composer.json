@@ -19,7 +19,8 @@
     "fluence-prototype/dispatcher": "^1.0",
     "fluence-prototype/filter": "^1.0",
     "fluence-prototype/security": "^1.0",
-    "fluence-prototype/validation": "^1.0"
+    "fluence-prototype/validation": "^1.0",
+    "ext-mbstring": "*"
   },
   "autoload": {
     "psr-4": {

@@ -6,7 +6,6 @@ namespace App;
 
 use FluencePrototype\Auth\ForbiddenException;
 use FluencePrototype\Cache\Cache;
-use FluencePrototype\Console\Commands;
 use FluencePrototype\Dispatcher\Dispatcher;
 use FluencePrototype\Dispatcher\InvalidDependencyException;
 use FluencePrototype\Filesystem\DirectoryNotFoundException;
@@ -20,6 +19,7 @@ use FluencePrototype\Http\Messages\Request;
 use FluencePrototype\Router\RouteInformation;
 use FluencePrototype\Router\RouteMatcher;
 use RedBeanPHP\R;
+use ReflectionException;
 
 /**
  * Class MainApp
@@ -33,13 +33,14 @@ class MainApp
      */
     public function __construct()
     {
-        setlocale(LC_ALL, 'da', 'da_DK', 'da-DK');
+        setlocale(LC_ALL, 'da', 'da_DK', 'da-DK', 'DK_da.UTF-8', 'da_DK.UTF-8', 'DK_da.utf8', 'da_DK.utf8');
         date_default_timezone_set('Europe/Berlin');
-        session_start();
+        mb_internal_encoding('UTF-8');
+        header('Strict-Transport-Security: max-age=31556926; includeSubDomains; preload');
 
         try {
             /** BOOTSTRAP STARTS */
-            // parse .env file and store them them in $_ENV
+            // parse .env file and store them in $_ENV
             $cache = new Cache();
 
             if (!$lines = $cache->fetch(key: 'env')) {
@@ -53,6 +54,9 @@ class MainApp
 
                 $_ENV[trim($key)] = trim($value);
             }
+
+            session_name($_ENV['SESSION_NAME']);
+            session_set_cookie_params(0, '/', '.' . $_ENV['G_RECAPTCHA_HOSTNAME'], true, true);
 
             // establish db connection
             $dsn = 'mysql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['DATABASE_NAME'] . ';charset=utf8';
@@ -86,10 +90,16 @@ class MainApp
 
             $routeInformation = RouteInformation::createFromArray(routeInformationArray: $routeInformationArray);
             $dispatcher = new Dispatcher(request: $request, routeInformation: $routeInformation);
+
+            ob_start();
+
             $dispatcher->dispatch()->render();
-        } catch (ForbiddenException | DirectoryNotFoundException | InvalidDirectoryPathException | InvalidDependencyException | InvalidFilePathException | NotFoundException | MethodNotAllowedException | ReflectionException $exception) {
+
+            ob_flush();
+        } catch (ForbiddenException | InvalidDependencyException | InvalidFilePathException | NotFoundException | MethodNotAllowedException | ReflectionException | DirectoryNotFoundException | InvalidDirectoryPathException  $exception) {
+            $request = new Request();
+            
             if ($exception instanceof ForbiddenException and class_exists('App\\Controllers\\' . $request->getSubdomain() . '\\ForbiddenController')) {
-                $request = new Request();
 
                 $routeInformationArray = [
                     'isFile' => false,
@@ -101,7 +111,15 @@ class MainApp
 
                 $routeInformation = RouteInformation::createFromArray(routeInformationArray: $routeInformationArray);
                 $dispatcher = new Dispatcher(request: $request, routeInformation: $routeInformation);
-                $dispatcher->dispatch()->render();
+
+                ob_start();
+
+                try {
+                    $dispatcher->dispatch()->render();
+                } catch (InvalidDependencyException | ReflectionException | MethodNotAllowedException | NotFoundException) {
+                }
+
+                ob_flush();
             }
 
             if ($exception instanceof NotFoundException and class_exists('App\\Controllers\\' . $request->getSubdomain() . '\\NotFoundController')) {
@@ -117,7 +135,15 @@ class MainApp
 
                 $routeInformation = RouteInformation::createFromArray(routeInformationArray: $routeInformationArray);
                 $dispatcher = new Dispatcher(request: $request, routeInformation: $routeInformation);
-                $dispatcher->dispatch()->render();
+
+                ob_start();
+
+                try {
+                    $dispatcher->dispatch()->render();
+                } catch (InvalidDependencyException | ReflectionException | MethodNotAllowedException | NotFoundException) {
+                }
+
+                ob_flush();
             }
 
             if ($exception instanceof MethodNotAllowedException and class_exists('App\\Controllers\\' . $request->getSubdomain() . '\\MethodNotAllowedController')) {
@@ -133,7 +159,15 @@ class MainApp
 
                 $routeInformation = RouteInformation::createFromArray(routeInformationArray: $routeInformationArray);
                 $dispatcher = new Dispatcher(request: $request, routeInformation: $routeInformation);
-                $dispatcher->dispatch()->render();
+
+                ob_start();
+
+                try {
+                    $dispatcher->dispatch()->render();
+                } catch (InvalidDependencyException | ReflectionException | MethodNotAllowedException | NotFoundException) {
+                }
+
+                ob_flush();
             }
 
             die($exception->getCode());

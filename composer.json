@@ -14,12 +14,12 @@
   "require": {
     "php": ">=8.0.0",
     "ext-gd": "*",
-    "fluence-prototype/auth": "^1.0",
-    "fluence-prototype/collections": "^1.0",
-    "fluence-prototype/dispatcher": "^1.0",
-    "fluence-prototype/filter": "^1.0",
-    "fluence-prototype/security": "^1.0",
-    "fluence-prototype/validation": "^1.0",
+    "fluence-prototype/auth": "^2.0",
+    "fluence-prototype/collections": "^2.0",
+    "fluence-prototype/dispatcher": "^2.0",
+    "fluence-prototype/filter": "^2.0",
+    "fluence-prototype/security": "^2.0",
+    "fluence-prototype/validation": "^2.0",
     "ext-mbstring": "*"
   },
   "autoload": {

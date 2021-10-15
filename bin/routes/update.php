@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use FluencePrototype\Auth\AcceptRoles;
 use FluencePrototype\Collections\Collections;
 use FluencePrototype\Filesystem\DirectoryNotFoundException;
 use FluencePrototype\Filesystem\Filesystem;
@@ -13,6 +14,25 @@ use FluencePrototype\Router\Route;
 use FluencePrototype\Router\RouteNameAlreadyExistsException;
 
 require __DIR__ . '/../../vendor/autoload.php';
+
+function getRoles(string $controller): array
+{
+    try {
+        $controllerClass = new ReflectionClass(objectOrClass: $controller);
+        $controllerClassAttributes = $controllerClass->getAttributes(name: AcceptRoles::class);
+
+        if (!empty($controllerClassAttributes)) {
+            /** @var ReflectionAttribute $acceptRolesAttribute */
+            $acceptRolesAttribute = array_pop(array: $controllerClassAttributes);
+            $acceptRolesAttributeParameters = $acceptRolesAttribute->getArguments();
+
+            return array_pop(array: $acceptRolesAttributeParameters);
+        }
+    } catch (ReflectionException) {
+    }
+
+    return [];
+}
 
 try {
     $routeCacheCollections = new Collections();
@@ -44,6 +64,7 @@ try {
 
                 $namedRouteArray[$route->getName()] = [
                     'path' => $route->getPath() . (!$route->isFile() && $route->getPath() !== '' ? '/' : ''),
+                    'roles' => getRoles(controller: $controller),
                     'subdomain' => $route->getSubdomain()
                 ];
             }

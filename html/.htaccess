@@ -6,9 +6,10 @@ Options -MultiViews
 ServerSignature Off
 
 php_value session.cookie_httponly 1
-php_value session.cookie_lifetime 0
+php_value session.cookie_lifetime 3600
+php_value session.cookie_samesite "Strict"
 php_value session.cookie_secure 1
-php_value session.hash_function "sha256"
+php_value session.gc_maxlifetime 3600
 php_value session.use_cookies 1
 php_value session.use_only_cookies 1
 php_value session.use_strict_mode 1

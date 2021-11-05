@@ -10,9 +10,15 @@ use FluencePrototype\Filesystem\Filesystem;
 use FluencePrototype\Filesystem\InvalidDirectoryPathException;
 use FluencePrototype\Filesystem\InvalidFilepathException;
 
+/**
+ *
+ */
 class AppConfig
 {
 
+    /**
+     * @return string
+     */
     private static function scheme(): string
     {
         echo 'http or https?: ';
@@ -35,9 +41,12 @@ class AppConfig
         return $input;
     }
 
+    /**
+     * @return string
+     */
     private static function host(): string
     {
-        echo "hostname (DON'T INCLUDE SUBDOMAIN - REMEMBER TRAILING SLASH)?: ";
+        echo "hostname: ";
 
         $handle = fopen('php://stdin', 'r');
         $input = fgets($handle);
@@ -46,9 +55,12 @@ class AppConfig
 
         $input = trim($input);
 
-        return trim($input);
+        return trim($input . '/public_html/');
     }
 
+    /**
+     * @param Event $event
+     */
     public static function run(Event $event): void
     {
         $vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');

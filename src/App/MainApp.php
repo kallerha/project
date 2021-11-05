@@ -55,8 +55,13 @@ class MainApp
                 $_ENV[trim($key)] = trim($value);
             }
 
-            session_name($_ENV['SESSION_NAME']);
-            session_set_cookie_params(0, '/', '.' . $_ENV['G_RECAPTCHA_HOSTNAME'], true, true);
+            session_set_cookie_params(
+                lifetime_or_options: 0,
+                path: '/',
+                domain: $_ENV['JWT_COOKIE_DOMAIN'],
+                secure: true,
+                httponly: true
+            );
 
             // establish db connection
             $dsn = 'mysql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['DATABASE_NAME'] . ';charset=utf8';

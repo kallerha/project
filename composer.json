@@ -13,13 +13,12 @@
   ],
   "require": {
     "php": ">=8.0.0",
-    "ext-gd": "*",
-    "fluence-prototype/auth": "^2.0",
-    "fluence-prototype/collections": "^2.0",
-    "fluence-prototype/dispatcher": "^2.0",
-    "fluence-prototype/filter": "^2.0",
-    "fluence-prototype/security": "^2.0",
-    "fluence-prototype/validation": "^2.0",
+    "fluence-prototype/auth": "^3.0",
+    "fluence-prototype/collections": "^3.0",
+    "fluence-prototype/dispatcher": "^3.0",
+    "fluence-prototype/filter": "^3.0",
+    "fluence-prototype/security": "^3.0",
+    "fluence-prototype/validation": "^3.0",
     "ext-mbstring": "*"
   },
   "autoload": {
@@ -30,5 +29,5 @@
   "scripts": {
     "post-create-project-cmd": "App\\AppConfig::run"
   },
-  "minimum-stability": "stable"
+  "minimum-stability": "dev"
 }

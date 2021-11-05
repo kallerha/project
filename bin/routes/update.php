@@ -15,6 +15,10 @@ use FluencePrototype\Router\RouteNameAlreadyExistsException;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
+/**
+ * @param string $controller
+ * @return array
+ */
 function getRoles(string $controller): array
 {
     try {
@@ -42,7 +46,9 @@ try {
     $declaredClasses = get_declared_classes();
 
     foreach ($files as $file) {
-        require $file->toFullPath();
+        if ($file->getExtension() === 'php') {
+            require $file->toFullPath();
+        }
     }
 
     $controllers = array_diff(get_declared_classes(), $declaredClasses);
@@ -86,6 +92,6 @@ try {
     $file->write(content: ';');
 
     die('Success!');
-} catch (ReflectionException | DirectoryNotFoundException | InvalidDirectoryPathException | InvalidFilepathException | InvalidRouteNameException | InvalidRoutePathException | RouteNameAlreadyExistsException $e) {
-    die('Something went wrong...');
+} catch (ReflectionException | DirectoryNotFoundException | InvalidDirectoryPathException | InvalidFilepathException | InvalidRouteNameException | InvalidRoutePathException | RouteNameAlreadyExistsException $exception) {
+    die($exception->getMessage());
 }
